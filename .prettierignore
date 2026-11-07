@@ -1,0 +1,7 @@
+out/
+dist/
+release/
+coverage/
+legacy/
+native/macos/.build/
+package-lock.json

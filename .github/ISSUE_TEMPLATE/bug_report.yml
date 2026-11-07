@@ -1,0 +1,38 @@
+name: Bug report
+description: Something does not work as expected
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, what happened instead.
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options: [macOS (Apple Silicon), macOS (Intel), Windows 11, Windows 10]
+    validations:
+      required: true
+  - type: dropdown
+    id: lang
+    attributes:
+      label: Language
+      options: [Vietnamese, English]
+  - type: input
+    id: version
+    attributes:
+      label: Voicebar version
+      placeholder: '0.2.0'
+  - type: input
+    id: claude
+    attributes:
+      label: Claude CLI version (`claude --version`)
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Tray menu → Help → Open logs folder. Remove anything private first.
+      render: text
