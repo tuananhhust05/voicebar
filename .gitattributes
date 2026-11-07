@@ -1,0 +1,7 @@
+# Keep LF everywhere (Prettier enforces it, Windows checkouts would otherwise get CRLF)
+* text=auto eol=lf
+
+*.png binary
+*.icns binary
+*.ico binary
+*.bin binary
