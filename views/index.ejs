@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Trợ lý giọng nói</title>
+  <meta name="color-scheme" content="dark">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!-- Font tải không chặn: không để Google Fonts chậm làm trễ app.js -->
+  <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet"></noscript>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Bỏ qua tới nội dung chính</a>
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-dot" aria-hidden="true"></span>
+      <h1>Trợ lý giọng nói</h1>
+    </div>
+    <div class="topbar-actions">
+      <div class="seg" role="radiogroup" aria-label="Ngôn ngữ nói và đọc">
+        <button type="button" class="seg-btn" role="radio" data-lang="vi" aria-checked="true" title="Tiếng Việt">VI</button>
+        <button type="button" class="seg-btn" role="radio" data-lang="en" aria-checked="false" title="English">EN</button>
+      </div>
+      <span class="chip" title="<%= mode === 'mac' ? 'Dùng Claude CLI trên máy Mac' : 'Dùng Claude CLI trong container' %>">
+        <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8V4H8"/><rect x="4" y="8" width="16" height="12" rx="2"/><path d="M2 14h2M20 14h2M15 13v2M9 13v2"/></svg>
+        <%= model %><%= mode === 'mac' ? ' · Mac' : '' %>
+      </span>
+      <button type="button" id="btn-new" class="btn-ghost" aria-label="Bắt đầu cuộc trò chuyện mới">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        <span class="btn-label">Mới</span>
+      </button>
+    </div>
+  </header>
+
+  <% if (!authOk) { %>
+  <div class="banner" role="alert">
+    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4M12 17h.01"/></svg>
+    <span>Chưa kết nối Claude. Chạy <code>./start.sh</code> trong thư mục dự án để bật bridge gọi Claude CLI của máy.</span>
+  </div>
+  <% } %>
+
+  <main id="main" class="main">
+    <section id="transcript" class="transcript" aria-live="polite" aria-label="Cuộc trò chuyện">
+      <div class="empty" id="empty-state">
+        <p class="empty-title">Bấm nút micro và nói</p>
+        <p class="empty-sub">Lời bạn nói hiện vào ô bên dưới. Xem lại, sửa nếu cần rồi bấm Gửi. Chọn VI hoặc EN ở góc trên.</p>
+        <ul class="hints">
+          <li><kbd>Space</kbd> bật/tắt micro</li>
+          <li><kbd>Enter</kbd> gửi</li>
+          <li><kbd>Esc</kbd> dừng đọc</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="dock">
+    <div class="controls">
+      <button type="button" id="btn-autospeak" class="ctl" aria-pressed="true" title="Tự động đọc to câu trả lời">
+        <span class="ctl-icon" aria-hidden="true">
+          <svg class="icon icon-on" viewBox="0 0 24 24"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><path d="M16 9a5 5 0 0 1 0 6"/><path d="M19.4 18.4a9 9 0 0 0 0-12.8"/></svg>
+          <svg class="icon icon-off" viewBox="0 0 24 24"><path d="M11 4.7a.7.7 0 0 0-1.2-.5L6.4 7.6A1.4 1.4 0 0 1 5.4 8H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2.4a1.4 1.4 0 0 1 1 .4l3.4 3.4a.7.7 0 0 0 1.2-.5z"/><path d="m22 9-6 6M16 9l6 6"/></svg>
+        </span>
+        <span class="ctl-label" id="autospeak-label">Tự đọc: Bật</span>
+      </button>
+
+      <button type="button" id="btn-mic" class="mic" data-state="idle" aria-label="Bắt đầu nói" aria-pressed="false">
+        <span class="mic-ring" aria-hidden="true"></span>
+        <svg class="icon icon-lg mic-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></svg>
+        <svg class="icon icon-lg stop-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+        <span class="spinner" aria-hidden="true"></span>
+      </button>
+
+      <button type="button" id="btn-stop" class="ctl" disabled title="Dừng đọc (Esc)">
+        <span class="ctl-icon" aria-hidden="true">
+          <svg class="icon" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>
+        </span>
+        <span class="ctl-label">Dừng đọc</span>
+      </button>
+    </div>
+
+    <p id="status" class="status" role="status">Sẵn sàng</p>
+
+    <form id="text-form" class="composer" autocomplete="off">
+      <label for="text-input" class="sr-only">Nội dung gửi cho Claude</label>
+      <textarea id="text-input" rows="1" maxlength="8000" placeholder="Nói hoặc gõ câu hỏi…"></textarea>
+      <div class="composer-actions">
+        <button type="button" id="btn-clear" class="btn-icon" aria-label="Xoá nội dung" hidden>
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+        <button type="submit" id="btn-send" class="btn-send" disabled>
+          <span>Gửi</span>
+          <svg class="icon icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M14.5 21.7a.5.5 0 0 0 .9 0L22 2.5a.5.5 0 0 0-.6-.6L2.3 8.6a.5.5 0 0 0 0 .9l8 3.2a2 2 0 0 1 1.1 1.1z"/><path d="m21.9 2.1-10.9 10.9"/></svg>
+        </button>
+      </div>
+    </form>
+
+    <details class="voice-picker">
+      <summary>Giọng đọc</summary>
+      <div class="voice-row">
+        <label for="voice-select">Giọng</label>
+        <select id="voice-select"></select>
+        <label for="rate">Tốc độ</label>
+        <input id="rate" type="range" min="0.6" max="1.6" step="0.1" value="1">
+      </div>
+    </details>
+  </footer>
+
+  <script src="/static/app.js" defer></script>
+</body>
+</html>
