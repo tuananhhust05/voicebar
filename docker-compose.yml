@@ -1,0 +1,19 @@
+services:
+  voice-assistant:
+    build: .
+    container_name: voice-assistant
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      # Gọi Claude CLI của máy Mac qua bridge (bridge/bridge.js, chạy bằng ./start.sh)
+      CLAUDE_BRIDGE_URL: http://host.docker.internal:${BRIDGE_PORT:-4871}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    ports:
+      # Chỉ mở trên localhost. 3000 và 5001 trên máy đã có app khác dùng.
+      - "127.0.0.1:${HOST_PORT:-4870}:3000"
+    volumes:
+      - claude-home:/home/node/.claude
+
+volumes:
+  claude-home:

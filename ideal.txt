@@ -1,0 +1,4 @@
+xây dựng 1 web chạy local ngay trên máy này 
+web đó thu âm , chuyển cho claude ( claude cli của máy luôn )
+claude xử lý xong chạy tts mặc định của máy ( tiếng việt )
+đọc to cho tôi nghe 

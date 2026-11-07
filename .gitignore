@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+out/
+release/
+coverage/
+native/macos/.build/
+
+# Runtime data & secrets
+.env
+.env.*
+!.env.example
+logs/
+*.log
+bridge-workspace/
+legacy/web-prototype/bridge-workspace/
+legacy/web-prototype/logs/
+
+# Downloaded speech models
+models/
+*.bin
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json

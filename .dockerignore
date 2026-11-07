@@ -1,0 +1,12 @@
+node_modules
+.env
+.git
+workspace
+design-system
+ideal.txt
+README.md
+logs
+bridge
+bridge-workspace
+start.sh
+stop.sh
