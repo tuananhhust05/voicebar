@@ -1,15 +1,67 @@
 {
-  "name": "tro-ly-giong-noi",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Trợ lý giọng nói local: thu âm → Claude CLI → đọc to bằng giọng tiếng Việt của máy",
-  "main": "server.js",
+  "name": "voicebar",
+  "productName": "Voicebar",
+  "version": "0.2.0",
+  "description": "Menu-bar voice assistant for macOS and Windows: speak to your local Claude Code CLI and hear the answer in Vietnamese or English.",
+  "keywords": [
+    "electron",
+    "voice-assistant",
+    "speech-recognition",
+    "text-to-speech",
+    "whisper",
+    "claude",
+    "vietnamese",
+    "menubar",
+    "tray"
+  ],
+  "homepage": "https://github.com/tuananhhust05/voicebar#readme",
+  "bugs": {
+    "url": "https://github.com/tuananhhust05/voicebar/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tuananhhust05/voicebar.git"
+  },
+  "license": "MIT",
+  "author": "tuananhhust05 <tuananhhust05@gmail.com>",
   "type": "module",
+  "main": "out/main/index.js",
+  "engines": {
+    "node": ">=22.12"
+  },
   "scripts": {
-    "start": "node server.js"
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit -p tsconfig.node.json && tsc --noEmit -p tsconfig.web.json",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "check": "npm run lint && npm run typecheck && npm run format:check && npm test",
+    "dist:mac": "npm run build && electron-builder --mac",
+    "dist:win": "npm run build && electron-builder --win"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.19.2",
+    "@vitest/coverage-v8": "^5.1.0",
+    "electron": "^45.2.3",
+    "electron-builder": "^26.18.0",
+    "electron-vite": "^6.0.0",
+    "eslint": "^10.14.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.14.0",
+    "prettier": "^3.9.10",
+    "typescript": "~6.0.3",
+    "typescript-eslint": "^8.72.1",
+    "vite": "^8.3.6",
+    "vitest": "^5.1.0"
   },
   "dependencies": {
-    "ejs": "^3.1.10",
-    "express": "^4.21.2"
+    "electron-updater": "^6.8.11"
   }
 }
